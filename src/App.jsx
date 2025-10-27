@@ -33,7 +33,11 @@ export default function App() {
       const result = await response.json();
 
       if (!result?.success) {
-        alert("Decompression failed");
+        if (result.error === "Too many decompression requests. Try again later.") {
+          alert("You are rate limited. Try again later.");
+        } else {
+          alert("Decompression failed");
+        }
         return;
       }
 

@@ -3,6 +3,7 @@ import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
 import { brotliDecompress } from "zlib";
+import rateLimit from "express-rate-limit";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,9 +11,18 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const upload = multer();
 
+// Rate limit for /decompress (5 requests per minute)
+const decompressLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 5,
+  message: { success: false, error: "Too many decompression requests. Try again later." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 app.use(express.static(path.join(__dirname, "dist")));
 
-app.post("/decompress", upload.single("file"), (req, res) => {
+app.post("/decompress", decompressLimiter, upload.single("file"), (req, res) => {
   try {
     if (!req.file) return res.json({ success: false, error: "No file uploaded" });
 
