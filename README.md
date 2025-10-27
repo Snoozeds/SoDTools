@@ -2,6 +2,11 @@
 A website that lets users view information about their Shadows of Doubt city. \
 Accepts the game's `.cit`/`.citb` files.
 
+This project uses Railway for its hosting. If you'd like to use Railway as well, click the button below to use my referral link. You get $20 in credits upon signup, and it helps support this tool.
+<br />
+
+<a href="https://railway.com?referralCode=9s2V_A"><img src="/wiki/img/deploy-with-railway.png" width="200px"></a>
+
 ## Features:
 - Solving murder ciphers.
 - Looking at citizen profiles to see info like birthday, height, hair/eye colour, and their passcodes (blurred by default).
