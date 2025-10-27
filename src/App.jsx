@@ -129,14 +129,14 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center font-mono bg-ui-dark text-ui-text relative">
-      <h1 className="text-3xl font-bold mb-4 drop-shadow-[0_0_6px_theme(colors.ui-border)]">
+      <h1 className="text-6xl font-bold mb-4 drop-shadow-[0_0_6px_theme(colors.ui-border)]">
         Shadows of Doubt Tools
       </h1>
 
       {!cityData ? (
         <>
           <p
-            className="text-ui-text-dim text-lg underline cursor-pointer mb-5 hover:text-ui-text transition-colors"
+            className="text-ui-text-dim text-2xl underline cursor-pointer mb-5 hover:text-ui-text transition-colors"
             onClick={() => setShowDialog(true)}
           >
             Where do I find my city files?
@@ -144,7 +144,7 @@ export default function App() {
 
           <div
             {...getRootProps()}
-            className={`relative w-[480px] h-[160px] border rounded-sm grid-pattern flex flex-col justify-center items-center transition-all duration-200 cursor-pointer
+            className={`relative w-[720px] h-[240px] border rounded-sm grid-pattern flex flex-col justify-center items-center transition-all duration-200 cursor-pointer
               ${loading
                 ? "border-ui-border shadow-[0_0_20px_theme(colors.ui-border)] motion-safe:animate-pulse opacity-70"
                 : isDragActive
@@ -153,7 +153,7 @@ export default function App() {
               }`}
           >
             <input {...getInputProps()} />
-            <p className="text-ui-text-dim text-lg">
+            <p className="text-ui-text-dim text-2xl">
               {loading
                 ? "Loading city data..."
                 : isDragActive
@@ -161,11 +161,11 @@ export default function App() {
                   : "Drag & drop or click to upload"}
             </p>
             {!isDragActive && !loading && (
-              <span className="text-ui-text-dimmer text-lg">(.cit/.citb files)</span>
+              <span className="text-ui-text-dimmer text-xl">(.cit/.citb files)</span>
             )}
             {loading && (
               <div className="absolute inset-0 flex items-center justify-center bg-ui-dark/50">
-                <div className="w-8 h-8 border-4 border-ui-border border-t-transparent rounded-full motion-safe:animate-spin" />
+                <div className="w-12 h-12 border-4 border-ui-border border-t-transparent rounded-full motion-safe:animate-spin" />
               </div>
             )}
           </div>
@@ -217,7 +217,7 @@ export default function App() {
 
       {/* Footer disclaimer. Only appears when city data hasn't been loaded. */}
       {!cityData && (
-        <footer className="mt-8 text-sm text-ui-text-dim text-center opacity-70 max-w-[600px]">
+        <footer className="mt-8 text-base text-ui-text-dim text-center opacity-70 max-w-[600px]">
           Shadows of Doubt Tools is an independent, fan-made project and is not affiliated
           with, endorsed by, or supported by ColePowered Games or Fireshine Games.
           All game content and trademarks belong to their respective owners.
