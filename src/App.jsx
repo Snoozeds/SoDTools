@@ -38,7 +38,7 @@ export default function App() {
       }
 
       setCityData(result);
-      
+
       console.log(
         `Loaded city: ${result.data?.cityName || "Unknown"} — population ${result.data?.population || "?"}`
       );
@@ -52,7 +52,11 @@ export default function App() {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { "application/octet-stream": [".cit", ".citb"] },
+    accept: {
+      "application/octet-stream": [".cit", ".citb"],
+      "application/x-binary": [".cit", ".citb"]
+    },
+    multiple: false,
   });
 
   // Cipher Solver
