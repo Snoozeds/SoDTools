@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ui-dark: #1a0d1f;
+  --color-ui-panel: #2b1536;
+  --color-ui-border: #ff6a6a;
+  --color-ui-border-dim: #c85f6a;
+  --color-ui-border-text: #000000;
+  --color-ui-text: #ffe6e6;
+  --color-ui-text-dim: #d8b5b5;
+  --color-ui-text-dimmer: #3a2e38ca;
+  --color-ui-text-dialogue: #ffd7e2;
+  --color-ui-icon: #fea9be;
+  --color-ui-bg-text: #3c050d51;
+
+  --font-family-mono: "JetBrains Mono", monospace;
+}
+
+body {
+  background-color: theme(colors.ui-dark);
+  font-family: theme(fontFamily.mono);
+}
+
+.grid-pattern {
+  background-image: repeating-linear-gradient(135deg,
+      rgba(255, 96, 128, 0.05) 0px,
+      rgba(255, 96, 128, 0.05) 2px,
+      transparent 2px,
+      transparent 6px);
+}
+
+
+/* Cursors */
+/* Default arrow */
+html, body {
+  cursor: url("./assets/cursors/CursorNormal.png"), default;
+}
+
+/* Text input */
+input, textarea {
+  cursor: url("./assets/cursors/CursorInputText.png"), text;
+}
+
+/* Links, buttons, clickable elements */
+a, button, [role="button"] {
+  cursor: url("./assets/cursors/CursorPointer.png"), pointer;
+}
+
+/* Move */
+[draggable="true"] {
+  cursor: url("./assets/cursors/CursorMoving.png"), move;
+}
+
+/* Horizontal resize */
+[style*="resize: horizontal"] {
+  cursor: url("./assets/cursors/CursorResizeHorizontal.png"), ew-resize;
+}
+
+/* Vertical resize */
+[style*="resize: vertical"] {
+  cursor: url("./assets/cursors/CursorResizeVertical.png"), ns-resize;
+}
+
+/* Trying to replicate SoD's button hover effect that you get in the main menu. */
+.tool-button::before,
+.tool-button::after,
+.tool-button span::before,
+.tool-button span::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 4px solid white;
+}
+
+/* Top left */
+.tool-button::before {
+  top: -2px;
+  left: -2px;
+  border-right: none;
+  border-bottom: none;
+}
+
+/* Bottom right */
+.tool-button::after {
+  bottom: -2px;
+  right: -2px;
+  border-left: none;
+  border-top: none;
+}
+
+/* Top right */
+.tool-button span::before {
+  top: -2px;
+  right: -2px;
+  border-left: none;
+  border-bottom: none;
+}
+
+/* Bottom Left */
+.tool-button span::after {
+  bottom: -2px;
+  left: -2px;
+  border-right: none;
+  border-top: none;
+}
+
+/* Keyframes for the corners moving inwards/outwards. */
+@keyframes cornerPulseTopLeft {
+  0%, 100% { top: -2px; left: -2px; width: 14px; height: 14px; }
+  50% { top: 6px; left: 6px; width: 10px; height: 10px; }
+}
+@keyframes cornerPulseBottomRight {
+  0%, 100% { bottom: -2px; right: -2px; width: 14px; height: 14px; }
+  50% { bottom: 6px; right: 6px; width: 10px; height: 10px; }
+}
+@keyframes cornerPulseTopRight {
+  0%, 100% { top: -2px; right: -2px; width: 14px; height: 14px; }
+  50% { top: 6px; right: 6px; width: 10px; height: 10px; }
+}
+@keyframes cornerPulseBottomLeft {
+  0%, 100% { bottom: -2px; left: -2px; width: 14px; height: 14px; }
+  50% { bottom: 6px; left: 6px; width: 10px; height: 10px; }
+}
+
+/* Hover anim */
+.tool-button:hover::before {
+  animation: cornerPulseTopLeft 1.2s ease-in-out infinite alternate;
+  animation-fill-mode: forwards;
+}
+.tool-button:hover::after {
+  animation: cornerPulseBottomRight 1.2s ease-in-out infinite alternate;
+  animation-fill-mode: forwards;
+}
+.tool-button:hover span::before {
+  animation: cornerPulseTopRight 1.2s ease-in-out infinite alternate;
+  animation-fill-mode: forwards;
+}
+.tool-button:hover span::after {
+  animation: cornerPulseBottomLeft 1.2s ease-in-out infinite alternate;
+  animation-fill-mode: forwards;
+}

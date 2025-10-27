@@ -1,0 +1,1 @@
+Assets inside here are from Shadows of Doubt. They remain the property of ColePowered Games/Fireshine Games.
