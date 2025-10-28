@@ -4,6 +4,8 @@ import DialogModal from "./components/DialogModal";
 import ToolButton from "./components/ToolButton";
 import CrumpledPaperIcon from "./assets/icons/IconCrumpledPaper.png";
 import SearchIcon from "./assets/icons/IconSearch.png";
+import DonateIcon from "./assets/icons/IconResolve.png";
+import LinkIcon from "./assets/icons/IconLink.png";
 import SearchOverlay from "./components/SearchOverlay";
 import CipherSolverWindow from "./components/CipherSolverWindow";
 import CitizenWindow from "./components/CitizenWindow";
@@ -186,22 +188,39 @@ export default function App() {
             <p>Seed: {cityData?.data?.seed}</p>
           </div>
 
-          <div className="flex gap-4">
+          <div className="flex flex-col items-center gap-8">
+            <div className="flex gap-4">
+              <ToolButton
+                iconSrc={SearchIcon}
+                label="Citizen Lookup"
+                onClick={() => setShowSearch(true)}
+              />
 
-            <ToolButton
-              iconSrc={SearchIcon}
-              label="Citizen Lookup"
-              onClick={() => setShowSearch(true)}
-            />
+              <ToolButton
+                iconSrc={CrumpledPaperIcon}
+                label="Cipher Solver"
+                onClick={() => {
+                  const nextId = solverWindows.length
+                    ? solverWindows[solverWindows.length - 1].id + 1
+                    : 1;
+                  setSolverWindows([...solverWindows, { id: nextId, minimized: false }]);
+                }}
+              />
+            </div>
 
-            <ToolButton
-              iconSrc={CrumpledPaperIcon}
-              label="Cipher Solver"
-              onClick={() => {
-                const nextId = solverWindows.length ? solverWindows[solverWindows.length - 1].id + 1 : 1;
-                setSolverWindows([...solverWindows, { id: nextId, minimized: false }]);
-              }}
-            />
+            <div className="flex gap-4">
+              <ToolButton
+                iconSrc={LinkIcon}
+                label="GitHub"
+                onClick={() => window.open("https://github.com/snoozeds/SoDTools", "_blank")}
+              />
+
+              <ToolButton
+                iconSrc={DonateIcon}
+                label="Donate"
+                onClick={() => window.open("https://snoozeds.com/support", "_blank")}
+              />
+            </div>
           </div>
 
           {solverWindows.map((w) => (
