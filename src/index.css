@@ -62,6 +62,14 @@ a, button, [role="button"] {
 }
 
 /* Trying to replicate SoD's button hover effect that you get in the main menu. */
+.tool-button {
+  position: relative;
+  background-color: rgba(27, 21, 64, 0.25);
+  transition: background-color 0.2s ease;
+  border: none;
+}
+
+/* Corner borders */
 .tool-button::before,
 .tool-button::after,
 .tool-button span::before,
@@ -107,36 +115,107 @@ a, button, [role="button"] {
 
 /* Keyframes for the corners moving inwards/outwards. */
 @keyframes cornerPulseTopLeft {
-  0%, 100% { top: -2px; left: -2px; width: 14px; height: 14px; }
-  50% { top: 6px; left: 6px; width: 10px; height: 10px; }
+
+  0%,
+  100% {
+    top: -2px;
+    left: -2px;
+    width: 14px;
+    height: 14px;
+  }
+
+  50% {
+    top: 6px;
+    left: 6px;
+    width: 10px;
+    height: 10px;
+  }
 }
+
 @keyframes cornerPulseBottomRight {
-  0%, 100% { bottom: -2px; right: -2px; width: 14px; height: 14px; }
-  50% { bottom: 6px; right: 6px; width: 10px; height: 10px; }
+
+  0%,
+  100% {
+    bottom: -2px;
+    right: -2px;
+    width: 14px;
+    height: 14px;
+  }
+
+  50% {
+    bottom: 6px;
+    right: 6px;
+    width: 10px;
+    height: 10px;
+  }
 }
+
 @keyframes cornerPulseTopRight {
-  0%, 100% { top: -2px; right: -2px; width: 14px; height: 14px; }
-  50% { top: 6px; right: 6px; width: 10px; height: 10px; }
+
+  0%,
+  100% {
+    top: -2px;
+    right: -2px;
+    width: 14px;
+    height: 14px;
+  }
+
+  50% {
+    top: 6px;
+    right: 6px;
+    width: 10px;
+    height: 10px;
+  }
 }
+
 @keyframes cornerPulseBottomLeft {
-  0%, 100% { bottom: -2px; left: -2px; width: 14px; height: 14px; }
-  50% { bottom: 6px; left: 6px; width: 10px; height: 10px; }
+
+  0%,
+  100% {
+    bottom: -2px;
+    left: -2px;
+    width: 14px;
+    height: 14px;
+  }
+
+  50% {
+    bottom: 6px;
+    left: 6px;
+    width: 10px;
+    height: 10px;
+  }
+}
+
+/* Keyframes for button flashing */
+@keyframes buttonFlash {
+
+  0%,
+  100% {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+
+  50% {
+    background-color: transparent;
+  }
 }
 
 /* Hover anim */
+.tool-button:hover {
+  animation: buttonFlash 1.2s ease-in-out infinite alternate;
+}
+
 .tool-button:hover::before {
   animation: cornerPulseTopLeft 1.2s ease-in-out infinite alternate;
-  animation-fill-mode: forwards;
 }
+
 .tool-button:hover::after {
   animation: cornerPulseBottomRight 1.2s ease-in-out infinite alternate;
-  animation-fill-mode: forwards;
 }
+
 .tool-button:hover span::before {
   animation: cornerPulseTopRight 1.2s ease-in-out infinite alternate;
-  animation-fill-mode: forwards;
 }
+
 .tool-button:hover span::after {
   animation: cornerPulseBottomLeft 1.2s ease-in-out infinite alternate;
-  animation-fill-mode: forwards;
 }
