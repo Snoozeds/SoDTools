@@ -6,9 +6,11 @@ import CrumpledPaperIcon from "./assets/icons/IconCrumpledPaper.png";
 import SearchIcon from "./assets/icons/IconSearch.png";
 import DonateIcon from "./assets/icons/IconResolve.png";
 import LinkIcon from "./assets/icons/IconLink.png";
+import FistIcon from "./assets/icons/IconFist.png";
 import SearchOverlay from "./components/SearchOverlay";
 import CipherSolverWindow from "./components/CipherSolverWindow";
 import CitizenWindow from "./components/CitizenWindow";
+import KnockoutListWindow from "./components/KnockoutListWindow";
 
 export default function App() {
   const [showDialog, setShowDialog] = useState(false);
@@ -17,6 +19,7 @@ export default function App() {
   const [solverWindows, setSolverWindows] = useState([]);
   const [showSearch, setShowSearch] = useState(false);
   const [openWindows, setOpenWindows] = useState([]);
+  const [koWindows, setKoWindows] = useState([]);
 
   // Upload handling
   const onDrop = useCallback(async (acceptedFiles) => {
@@ -210,6 +213,17 @@ export default function App() {
 
             <div className="flex gap-4">
               <ToolButton
+                iconSrc={FistIcon}
+                label="Spare No One Helper"
+                onClick={() => {
+                  const nextId = koWindows.length ? koWindows[koWindows.length - 1].id + 1 : 1;
+                  setKoWindows([...koWindows, { id: nextId, minimized: false }]);
+                }}
+              />
+            </div>
+
+            <div className="flex gap-4">
+              <ToolButton
                 iconSrc={LinkIcon}
                 label="GitHub"
                 onClick={() => window.open("https://github.com/snoozeds/SoDTools", "_blank")}
@@ -237,6 +251,24 @@ export default function App() {
               solveCipher={solveCipher}
             />
           ))}
+
+          {koWindows.map((w) => (
+            <KnockoutListWindow
+              key={w.id}
+              id={w.id}
+              minimized={w.minimized}
+              onClose={(id) => setKoWindows((prev) => prev.filter((x) => x.id !== id))}
+              onMinimize={(id) =>
+                setKoWindows((prev) =>
+                  prev.map((x) => (x.id === id ? { ...x, minimized: !x.minimized } : x))
+                )
+              }
+              citizens={citizens}
+              cityTiles={cityData?.data?.cityTiles}
+              onOpenCitizen={openCitizenWindow}
+            />
+          ))}
+
         </div>
       )}
 

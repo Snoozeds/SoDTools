@@ -120,7 +120,7 @@ export default function CitizenWindow({
         top: `${position.y}px`,
         left: `${position.x}px`,
         width: 512,
-        zIndex: 50 + id,
+        zIndex: 600 + id,
       }}
     >
       {/* Title bar */}

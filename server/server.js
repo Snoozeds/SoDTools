@@ -31,7 +31,7 @@ app.post("/decompress", decompressLimiter, upload.single("file"), (req, res) => 
     const name = req.file.originalname;
     const ext = name.split(".").pop().toLowerCase();
 
-    if (ext === "citb") {
+    if (ext === "citb" || ext === "sodb") {
       // Remove last 4 bytes otherwise we get invalid JSON. Data added by Unity?
       const trimmed = buffer.subarray(0, buffer.length - 4);
 
@@ -51,8 +51,8 @@ app.post("/decompress", decompressLimiter, upload.single("file"), (req, res) => 
           res.json({ success: false, error: "Invalid JSON after decompression" });
         }
       });
-    } else if (ext === "cit") {
-      // cit files are just JSON.
+    } else if (ext === "cit" || ext === "sod") {
+      // cit/sod files are just JSON.
       try {
         const text = buffer.toString("utf8");
         const json = JSON.parse(text);
