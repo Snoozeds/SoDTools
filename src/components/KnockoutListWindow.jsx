@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import BrotliWorker from '../workers/brotli?worker'
 import useDrag from "../hooks/useDrag";
 import DialogModal from "./DialogModal";
 import IconBuilding from "../assets/icons/IconBuilding.png";
@@ -121,18 +122,37 @@ export default function KnockoutListWindow({
         }
         setError("");
         setLoading(true);
+
         try {
-            const fd = new FormData();
-            fd.append("file", file);
-            const resp = await fetch("/decompress", { method: "POST", body: fd });
-            const result = await resp.json();
-            if (!result?.success) throw new Error(result?.error || "Failed to read file");
-            const list = Array.isArray(result?.data?.spareNoOneReference)
-                ? result.data.spareNoOneReference
+            const arrayBuffer = await file.arrayBuffer();
+
+            const result = await new Promise((resolve, reject) => {
+                const worker = new BrotliWorker();
+                worker.postMessage(arrayBuffer);
+                worker.onmessage = ({ data }) => {
+                    try {
+                        const parsed = JSON.parse(data);
+                        resolve(parsed);
+                    } catch (err) {
+                        reject(err);
+                    } finally {
+                        worker.terminate();
+                    }
+                };
+                worker.onerror = (err) => {
+                    reject(err);
+                    worker.terminate();
+                };
+            });
+
+            const list = Array.isArray(result?.spareNoOneReference)
+                ? result.spareNoOneReference
                 : [];
+
             setSpareNoOneReference(list);
-        } catch {
-            setError("Upload failed");
+        } catch (err) {
+            console.error("Error decompressing save:", err);
+            setError("Failed to read file");
         } finally {
             setLoading(false);
             e.target.value = "";

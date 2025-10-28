@@ -39,7 +39,7 @@ export default function BuildingDirectoryWindow({
             map.get(bName).push(c);
         }
 
-        for (const [list] of map.entries()) {
+        for (const [, list] of map.entries()) {
             list.sort((a, b) => {
                 const addrA = (addrToName.get(a.home) || "").toLowerCase();
                 const addrB = (addrToName.get(b.home) || "").toLowerCase();
