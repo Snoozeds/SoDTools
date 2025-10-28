@@ -133,14 +133,14 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center font-mono bg-ui-dark text-ui-text relative">
-      <h1 className="text-6xl font-bold mb-4 drop-shadow-[0_0_6px_theme(colors.ui-border)]">
+      <h1 className="text-3xl sm:text-5xl font-bold mb-4 text-center drop-shadow-[0_0_6px_theme(colors.ui-border)]">
         Shadows of Doubt Tools
       </h1>
 
       {!cityData ? (
         <>
           <p
-            className="text-ui-text-dim text-2xl underline cursor-pointer mb-5 hover:text-ui-text transition-colors"
+            className="text-base sm:text-2xl underline cursor-pointer mb-5 hover:text-ui-text transition-colors text-center"
             onClick={() => setShowDialog(true)}
           >
             Where do I find my city files?
@@ -148,7 +148,7 @@ export default function App() {
 
           <div
             {...getRootProps()}
-            className={`relative w-[720px] h-[240px] border rounded-sm grid-pattern flex flex-col justify-center items-center transition-all duration-200 cursor-pointer
+            className={`relative w-full max-w-md sm:max-w-2xl h-48 sm:h-60 border rounded-sm grid-pattern flex flex-col justify-center items-center transition-all duration-200 cursor-pointer
               ${loading
                 ? "border-ui-border shadow-[0_0_20px_theme(colors.ui-border)] motion-safe:animate-pulse opacity-70"
                 : isDragActive
@@ -157,7 +157,7 @@ export default function App() {
               }`}
           >
             <input {...getInputProps()} />
-            <p className="text-ui-text-dim text-2xl">
+            <p className="text-ui-text-dim text-lg sm:text-2xl text-center px-4">
               {loading
                 ? "Loading city data..."
                 : isDragActive
@@ -165,7 +165,9 @@ export default function App() {
                   : "Drag & drop or click to upload"}
             </p>
             {!isDragActive && !loading && (
-              <span className="text-ui-text-dimmer text-xl">(.cit/.citb files)</span>
+              <span className="text-ui-text-dimmer text-base sm:text-xl">
+                (.cit/.citb files)
+              </span>
             )}
             {loading && (
               <div className="absolute inset-0 flex items-center justify-center bg-ui-dark/50">
