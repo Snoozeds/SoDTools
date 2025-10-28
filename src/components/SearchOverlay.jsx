@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { filterSchema, facialFeatureLabels, hairTypeLabels } from "../data/CitizenAttributes";
 
 export default function SearchOverlay({ citizens, cityTiles, onSelect, onClose }) {

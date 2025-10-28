@@ -7,7 +7,9 @@ import SearchIcon from "./assets/icons/IconSearch.png";
 import DonateIcon from "./assets/icons/IconResolve.png";
 import LinkIcon from "./assets/icons/IconLink.png";
 import FistIcon from "./assets/icons/IconFist.png";
+import BuildingIcon from "./assets/icons/IconBuilding.png";
 import SearchOverlay from "./components/SearchOverlay";
+import BuildingDirectoryWindow from "./components/BuildingDirectoryWindow";
 import CipherSolverWindow from "./components/CipherSolverWindow";
 import CitizenWindow from "./components/CitizenWindow";
 import KnockoutListWindow from "./components/KnockoutListWindow";
@@ -16,6 +18,7 @@ export default function App() {
   const [showDialog, setShowDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   const [cityData, setCityData] = useState(null);
+  const [buildingWindows, setBuildingWindows] = useState([]);
   const [solverWindows, setSolverWindows] = useState([]);
   const [showSearch, setShowSearch] = useState(false);
   const [openWindows, setOpenWindows] = useState([]);
@@ -200,15 +203,14 @@ export default function App() {
               />
 
               <ToolButton
-                iconSrc={CrumpledPaperIcon}
-                label="Cipher Solver"
+                iconSrc={BuildingIcon}
+                label="Building Directory"
                 onClick={() => {
-                  const nextId = solverWindows.length
-                    ? solverWindows[solverWindows.length - 1].id + 1
-                    : 1;
-                  setSolverWindows([...solverWindows, { id: nextId, minimized: false }]);
+                  const nextId = buildingWindows.length ? buildingWindows[buildingWindows.length - 1].id + 1 : 1;
+                  setBuildingWindows([...buildingWindows, { id: nextId, minimized: false }]);
                 }}
               />
+
             </div>
 
             <div className="flex gap-4">
@@ -220,6 +222,18 @@ export default function App() {
                   setKoWindows([...koWindows, { id: nextId, minimized: false }]);
                 }}
               />
+
+              <ToolButton
+                iconSrc={CrumpledPaperIcon}
+                label="Cipher Solver"
+                onClick={() => {
+                  const nextId = solverWindows.length
+                    ? solverWindows[solverWindows.length - 1].id + 1
+                    : 1;
+                  setSolverWindows([...solverWindows, { id: nextId, minimized: false }]);
+                }}
+              />
+
             </div>
 
             <div className="flex gap-4">
@@ -260,6 +274,23 @@ export default function App() {
               onClose={(id) => setKoWindows((prev) => prev.filter((x) => x.id !== id))}
               onMinimize={(id) =>
                 setKoWindows((prev) =>
+                  prev.map((x) => (x.id === id ? { ...x, minimized: !x.minimized } : x))
+                )
+              }
+              citizens={citizens}
+              cityTiles={cityData?.data?.cityTiles}
+              onOpenCitizen={openCitizenWindow}
+            />
+          ))}
+
+          {buildingWindows.map((w) => (
+            <BuildingDirectoryWindow
+              key={w.id}
+              id={w.id}
+              minimized={w.minimized}
+              onClose={(id) => setBuildingWindows((prev) => prev.filter((x) => x.id !== id))}
+              onMinimize={(id) =>
+                setBuildingWindows((prev) =>
                   prev.map((x) => (x.id === id ? { ...x, minimized: !x.minimized } : x))
                 )
               }
