@@ -60,7 +60,9 @@ export default function KnockoutListWindow({
             const building = addrToBuilding.get(c.home);
             if (building) occupied.add(building);
         }
-        return Array.from(occupied).sort((a, b) => a.localeCompare(b));
+        const list = Array.from(occupied).sort((a, b) => a.localeCompare(b));
+        if (citizens.some(c => c.homeless)) list.unshift("Homeless");
+        return list;
     }, [cityTiles, citizens]);
 
     const sorted = useMemo(() => {
@@ -101,7 +103,10 @@ export default function KnockoutListWindow({
             const name = (c.citizenName || "").toLowerCase();
             const { building } = getAddressInfo(c);
             const matchesQuery = !q || name.includes(q);
-            const matchesResidence = !selectedResidence || building === selectedResidence;
+            const matchesResidence =
+                !selectedResidence ||
+                (selectedResidence === "Homeless" && c.homeless) ||
+                building === selectedResidence;
             const isKO = knocked.has(c.humanID ?? c.id);
             return matchesQuery && matchesResidence && (!hideKnocked || !isKO);
         });
