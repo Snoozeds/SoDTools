@@ -217,7 +217,7 @@ export default function App() {
 
               <ToolButton
                 iconSrc={DonateIcon}
-                label="Donate"
+                label="Support me"
                 onClick={() => window.open("https://snoozeds.com/support", "_blank")}
               />
             </div>
