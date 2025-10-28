@@ -7,9 +7,5 @@ export default defineConfig(({ command }) => ({
   build: {
     outDir: "dist",
   },
-  server: command === "serve" ? {
-    proxy: {
-      "/decompress": "http://localhost:4000",
-    },
-  } : undefined,
+  base: "/"
 }));
