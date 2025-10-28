@@ -6,7 +6,13 @@ export default function SearchOverlay({ citizens, cityTiles, onSelect, onClose }
   const [suggestions, setSuggestions] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
-  // Suggestions dropdown appears when the search overlay is opened.
+  // normalize keys to handle capital letters in user input
+  function normalizeKey(k) {
+    if (!k) return k;
+    const lower = k.toLowerCase();
+    return Object.keys(filterSchema).find((x) => x.toLowerCase() === lower) || lower;
+  }
+
   useEffect(() => {
     refreshSuggestions("");
   }, []);
@@ -52,6 +58,7 @@ export default function SearchOverlay({ citizens, cityTiles, onSelect, onClose }
     const value = input;
     const rawLast = value.replace(/\s+$/, "").split(/\s+/).pop() || "";
     const [key, val] = rawLast.split(":");
+    const normKey = normalizeKey(key);
 
     if (!rawLast || val === undefined) {
       const filtered = filterKeys.filter((k) =>
@@ -60,10 +67,9 @@ export default function SearchOverlay({ citizens, cityTiles, onSelect, onClose }
       setSuggestions(filtered);
       setSelectedIndex(filtered.length ? 0 : -1);
     } else {
-      let values = filterSchema[key] || [];
+      let values = filterSchema[normKey] || [];
 
-      // Use dynamic job titles for jobTitle filter
-      if (key === "jobTitle" || key === "jobtitle") {
+      if (normKey === "jobTitle" || normKey === "jobtitle") {
         values = jobTitles;
       }
 
@@ -91,8 +97,9 @@ export default function SearchOverlay({ citizens, cityTiles, onSelect, onClose }
       const next = (parts.join(" ") + " ").trimEnd() + " ";
       setQuery(next);
 
-      let values = filterSchema[s] || [];
-      if (s === "jobTitle") values = jobTitles;
+      const normKey = normalizeKey(s);
+      let values = filterSchema[normKey] || [];
+      if (normKey === "jobTitle" || normKey === "jobtitle") values = jobTitles;
 
       setSuggestions(values);
       setSelectedIndex(values.length ? 0 : -1);
@@ -100,7 +107,8 @@ export default function SearchOverlay({ citizens, cityTiles, onSelect, onClose }
     }
 
     const [k] = last.split(":");
-    parts.push(`${k}:${s}`);
+    const normKey = normalizeKey(k);
+    parts.push(`${normKey}:${s}`);
     const next = (parts.join(" ") + " ").replace(/\s+$/, " ");
     setQuery(next);
     setSuggestions([]);
@@ -127,8 +135,7 @@ export default function SearchOverlay({ citizens, cityTiles, onSelect, onClose }
 
   function matchesKey(c, key, val) {
     const v = String(val).toLowerCase();
-
-    switch (key) {
+    switch (key.toLowerCase()) {
       case "haircolour": {
         const label = c.descriptors?.hairColourCategoryName;
         if (label) return label.toLowerCase().includes(v);
@@ -186,7 +193,7 @@ export default function SearchOverlay({ citizens, cityTiles, onSelect, onClose }
         if (!Array.isArray(c.descriptors?.facialFeatures)) return false;
 
         // Check by label name
-        const matchByLabel = c.descriptors.facialFeatures.some(f => {
+        const matchByLabel = c.descriptors.facialFeatures.some((f) => {
           const label = facialFeatureLabels[f.feature];
           return label && label.toLowerCase().includes(v);
         });
@@ -196,7 +203,7 @@ export default function SearchOverlay({ citizens, cityTiles, onSelect, onClose }
         // Check by index
         const expect = valueIndex(filterSchema.facialFeature, v);
         if (expect >= 0) {
-          return c.descriptors.facialFeatures.some(f => f.feature === expect);
+          return c.descriptors.facialFeatures.some((f) => f.feature === expect);
         }
 
         return false;
@@ -244,8 +251,9 @@ export default function SearchOverlay({ citizens, cityTiles, onSelect, onClose }
     let i = 0;
 
     const getAllowed = (key) => {
-      if (key === "jobtitle") return (jobTitles || []);
-      return (filterSchema[key] || []);
+      const normKey = normalizeKey(key);
+      if (normKey === "jobTitle" || normKey === "jobtitle") return jobTitles || [];
+      return filterSchema[normKey] || [];
     };
 
     while (i < tokens.length) {
@@ -253,17 +261,18 @@ export default function SearchOverlay({ citizens, cityTiles, onSelect, onClose }
       const colon = t.indexOf(":");
 
       if (colon > 0) {
-        const key = t.slice(0, colon).toLowerCase();
+        const rawKey = t.slice(0, colon);
+        const key = normalizeKey(rawKey);
         let cur = t.slice(colon + 1);
         let j = i + 1;
 
-        const allowed = getAllowed(key).map(s => String(s).toLowerCase());
+        const allowed = getAllowed(key).map((s) => String(s).toLowerCase());
         if (allowed.length) {
           let best = allowed.includes(cur.toLowerCase()) ? cur : null;
 
           while (j < tokens.length) {
             const next = cur + " " + tokens[j];
-            const isPrefix = allowed.some(a => a.startsWith(next.toLowerCase()));
+            const isPrefix = allowed.some((a) => a.startsWith(next.toLowerCase()));
             if (!isPrefix) break;
             cur = next;
             if (allowed.includes(cur.toLowerCase())) best = cur;
@@ -297,7 +306,7 @@ export default function SearchOverlay({ citizens, cityTiles, onSelect, onClose }
       .filter((c) => {
         // when not using filters: all tokens must appear in name
         const name = String(c.citizenName || "").toLowerCase();
-        const nameOK = text.length ? text.every((t) => name.includes(t)) : true;
+        const nameOK = text.length ? text.every((t) => name.includes(t.toLowerCase())) : true;
 
         // when using filters: AND across keys, OR within values per key
         const filtersOK =
