@@ -12,6 +12,7 @@ This project uses Railway for its hosting. If you'd like to use Railway as well,
 - Solving murder ciphers.
 - Looking at citizen profiles to see info like birthday, height, hair/eye colour, and their passcodes (blurred by default).
 - Searching the city by features, like searching all citizens that have black hair, or the retail owner job.
+- Providing help for the "Spare No One" achievement (KO everybody in the city at least once.)
 
 ## Previews:
 | Preview | Image |
