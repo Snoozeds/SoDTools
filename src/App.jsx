@@ -14,6 +14,8 @@ import CipherSolverWindow from "./components/CipherSolverWindow";
 import CitizenWindow from "./components/CitizenWindow";
 import KnockoutListWindow from "./components/KnockoutListWindow";
 
+import BrotliWorker from './workers/brotli?worker'
+
 export default function App() {
   const [showDialog, setShowDialog] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -29,30 +31,29 @@ export default function App() {
     const file = acceptedFiles[0];
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append("file", file);
-
     setLoading(true);
     try {
-      const response = await fetch("/decompress", {
-        method: "POST",
-        body: formData,
-      });
-      const result = await response.json();
+      const arrayBuffer = await file.arrayBuffer();
 
-      if (!result?.success) {
-        if (result.error === "Too many decompression requests. Try again later.") {
-          alert("You are rate limited. Try again later.");
-        } else {
-          alert("Decompression failed");
-        }
-        return;
+      let result;
+
+      if (file.name.endsWith(".citb")) {
+        result = await new Promise((resolve) => {
+          const brotli = new BrotliWorker();
+          brotli.postMessage(arrayBuffer);
+          brotli.addEventListener('message', ({ data }) => {
+            resolve(JSON.parse(data));
+          })
+        });
+      } else {
+        const textDecoder = new TextDecoder();
+        result = JSON.parse(textDecoder.decode(arrayBuffer));
       }
 
       setCityData(result);
 
       console.log(
-        `Loaded city: ${result.data?.cityName || "Unknown"} — population ${result.data?.population || "?"}`
+        `Loaded city: ${result?.cityName || "Unknown"} — population ${result?.population || "?"}`
       );
     } catch (err) {
       console.error("Error decompressing:", err);
@@ -73,7 +74,7 @@ export default function App() {
 
   // Cipher Solver
   function solveCipher(cipherText) {
-    const citizens = cityData?.data?.citizens;
+    const citizens = cityData?.citizens;
     if (!Array.isArray(citizens)) return [];
 
     const parts = cipherText.toUpperCase().split(".");
@@ -98,7 +99,7 @@ export default function App() {
   }
 
   // Citizen lookup
-  const citizens = useMemo(() => cityData?.data?.citizens || [], [cityData]);
+  const citizens = useMemo(() => cityData?.citizens || [], [cityData]);
 
   function openCitizenWindow(humanID) {
     setOpenWindows((prev) => {
@@ -188,10 +189,10 @@ export default function App() {
         <div className="flex flex-col items-center gap-6">
           <div className="text-center text-ui-text-dim text-xl">
             <p className="font-semibold text-ui-text">
-              City: {cityData?.data?.cityName || "Unknown"}
+              City: {cityData?.cityName || "Unknown"}
             </p>
-            <p>Population: {cityData?.data?.population ?? "?"}</p>
-            <p>Seed: {cityData?.data?.seed}</p>
+            <p>Population: {cityData?.population ?? "?"}</p>
+            <p>Seed: {cityData?.seed}</p>
           </div>
 
           <div className="flex flex-col items-center gap-8">
@@ -278,7 +279,7 @@ export default function App() {
                 )
               }
               citizens={citizens}
-              cityTiles={cityData?.data?.cityTiles}
+              cityTiles={cityData?.cityTiles}
               onOpenCitizen={openCitizenWindow}
             />
           ))}
@@ -295,7 +296,7 @@ export default function App() {
                 )
               }
               citizens={citizens}
-              cityTiles={cityData?.data?.cityTiles}
+              cityTiles={cityData?.cityTiles}
               onOpenCitizen={openCitizenWindow}
             />
           ))}
@@ -331,7 +332,7 @@ You can easily get to this by hitting the windows key + R, and then pasting %use
         <SearchOverlay
           citizens={citizens}
           onClose={() => setShowSearch(false)}
-          cityTiles={cityData?.data?.cityTiles}
+          cityTiles={cityData?.cityTiles}
           onSelect={(id) => openCitizenWindow(id)}
         />
       )}
@@ -345,7 +346,7 @@ You can easily get to this by hitting the windows key + R, and then pasting %use
             id={w.id}
             citizen={citizen}
             citizens={citizens}
-            cityTiles={cityData?.data?.cityTiles}
+            cityTiles={cityData?.cityTiles}
             minimized={w.minimized}
             onClose={closeWindow}
             onMinimize={minimizeWindow}
