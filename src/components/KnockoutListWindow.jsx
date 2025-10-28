@@ -187,7 +187,7 @@ export default function KnockoutListWindow({
                     {spareNoOneReference.length === 0 && (
                         <div className="border border-ui-border-dim rounded-sm p-2 bg-ui-dark/40">
                             <div className="flex items-center justify-between mb-1">
-                                <span className="text-ui-text-dim">Upload .sodb/.sod save file</span>
+                                <span className="text-ui-text-dim mb-2">Upload .sodb/.sod save file</span>
                                 <img
                                     src={IconHelp}
                                     title="Help"
@@ -211,6 +211,7 @@ export default function KnockoutListWindow({
                             />
                             {loading && <span className="ml-2 text-ui-text-dim">Reading…</span>}
                             {error && <div className="mt-1 text-red-400">{error}</div>}
+                            <p className="mt-2 text-sm text-ui-border">Make sure to upload a save that uses the same city as the one you uploaded.</p>
                         </div>
                     )}
 
