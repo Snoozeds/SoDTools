@@ -218,7 +218,7 @@ export default function KnockoutListWindow({
                                     src={IconHelp}
                                     title="Help"
                                     alt="help"
-                                    className="w-4 h-4 cursor-pointer opacity-70 hover:opacity-100"
+                                    className="w-8 h-8 cursor-pointer opacity-70 hover:opacity-100"
                                     onClick={() => setShowSodbHelp(true)}
                                 />
                             </div>
