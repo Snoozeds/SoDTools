@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from "react";
-import BrotliWorker from '../workers/brotli?worker'
+import BrotliWorker from '../workers/brotli?worker';
 import useDrag from "../hooks/useDrag";
 import DialogModal from "./DialogModal";
 import IconBuilding from "../assets/icons/IconBuilding.png";
 import IconHelp from "../assets/icons/IconHelp.png";
 import IconEye from "../assets/icons/IconEye.png";
+import IconSearch from "../assets/icons/IconSearch.png";
 import IconHidden from "../assets/icons/IconHidden.png";
 
 export default function KnockoutListWindow({
@@ -242,42 +243,80 @@ export default function KnockoutListWindow({
 
                     {/* TOOLBAR */}
                     <div className="flex items-center gap-2 flex-wrap">
-                        <input
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            placeholder="Search…"
-                            className="flex-1 h-7 px-2 rounded-sm border border-ui-border-dim bg-ui-dark/40 text-ui-text text-sm outline-none"
-                        />
-                        <select
-                            value={sortMode}
-                            onChange={(e) => setSortMode(e.target.value)}
-                            className="h-7 px-2 border border-ui-border-dim bg-ui-dark/40 rounded-sm text-ui-text text-sm"
-                            title="Sort mode"
-                        >
-                            <option value="name">Name</option>
-                            <option value="residence">Residence</option>
-                        </select>
-                        <img
-                            src={hideKnocked ? IconHidden : IconEye}
-                            onClick={() => setHideKnocked(v => !v)}
-                            title={hideKnocked ? "Show knocked out" : "Hide knocked out"}
-                            alt="toggle visibility"
-                            className="w-5 h-5 cursor-pointer opacity-80 hover:opacity-100"
-                        />
-                        <select
-                            value={selectedResidence}
-                            onChange={(e) => setSelectedResidence(e.target.value)}
-                            className="px-2 py-1 border border-ui-border-dim bg-ui-dark/40 rounded-sm text-ui-text"
-                            title="Filter by residence"
-                        >
-                            <option value="">All</option>
-                            {residences.map((r) => (
-                                <option key={r} value={r}>
-                                    {r}
-                                </option>
-                            ))}
-                        </select>
-                        <img src={IconBuilding} alt="building" className="w-5 h-5 opacity-70" />
+                        <div className="flex items-center gap-2 flex-1">
+                            <input
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                placeholder="Search…"
+                                className="flex-1 h-7 px-2 rounded-sm border border-ui-border-dim bg-ui-dark/40 text-ui-text text-sm outline-none"
+                            />
+                            {spareNoOneReference.length > 0 && (
+                                <>
+                                    <label
+                                        htmlFor={`sodb-upload-${id}`}
+                                        className={`px-3 py-1 border border-ui-border-dim rounded-sm ${loading ? "bg-ui-border/20 text-ui-text-dim cursor-wait" : "bg-ui-dark/50 text-ui-text hover:bg-ui-border/10 cursor-pointer"
+                                            } select-none`}
+                                    >
+                                        {loading ? "Reading…" : "Upload"}
+                                    </label>
+                                    <input
+                                        id={`sodb-upload-${id}`}
+                                        type="file"
+                                        accept=".sodb,.sod"
+                                        onChange={handleUpload}
+                                        className="hidden"
+                                        disabled={loading}
+                                    />
+                                </>
+                            )}
+                        </div>
+
+                        {/* Filters */}
+
+                        <div className="flex items-center gap-2">
+                            <div className="relative">
+                                <img
+                                    src={IconBuilding}
+                                    alt=""
+                                    className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 opacity-70 pointer-events-none"
+                                />
+                                <select
+                                    value={selectedResidence}
+                                    onChange={(e) => setSelectedResidence(e.target.value)}
+                                    className="h-7 w-58 pl-7 pr-2 border border-ui-border-dim bg-ui-dark/40 rounded-sm text-ui-text text-sm"
+                                    title="Filter by residence"
+                                >
+                                    <option value="">All</option>
+                                    {residences.map((r) => (
+                                        <option key={r} value={r}>{r}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="relative">
+                                <img
+                                    src={IconSearch}
+                                    alt=""
+                                    className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 opacity-70 pointer-events-none"
+                                />
+                                <select
+                                    value={sortMode}
+                                    onChange={(e) => setSortMode(e.target.value)}
+                                    className="h-7 pl-7 pr-2 border border-ui-border-dim bg-ui-dark/40 rounded-sm text-ui-text text-sm"
+                                    title="Sort mode"
+                                >
+                                    <option value="name">Name</option>
+                                    <option value="residence">Residence</option>
+                                </select>
+                            </div>
+                            <img
+                                src={hideKnocked ? IconHidden : IconEye}
+                                onClick={() => setHideKnocked(v => !v)}
+                                title={hideKnocked ? "Show knocked out" : "Hide knocked out"}
+                                alt="toggle visibility"
+                                className="w-5 h-5 cursor-pointer opacity-80 hover:opacity-100"
+                            />
+                        </div>
                     </div>
 
                     {/* LIST */}
@@ -300,7 +339,7 @@ export default function KnockoutListWindow({
                                     </button>
                                     <button
                                         onClick={() => toggleKnockout(idKey)}
-                                        className="ml-2 w-6 h-6 flex items-center justify-center border border-ui-border-dim rounded-sm text-xs text-ui-text-dim hover:text-ui-text hover:bg-ui-border/10"
+                                        className="mr-1 w-6 h-6 flex items-center justify-center border border-ui-border-dim rounded-sm text-xs text-ui-text-dim hover:text-ui-text hover:bg-ui-border/10"
                                         title="Toggle KO"
                                     >
                                         {isKO ? "↺" : "✕"}
