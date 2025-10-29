@@ -54,6 +54,13 @@ export const heightLabels = {
   4: "Very tall",
 };
 
+export const buildLabels = {
+  0: "Skinny",
+  1: "Average",
+  2: "Overweight",
+  3: "Muscular"
+}
+
 export const genderLabels = {
   0: "Male",
   1: "Female",
@@ -65,6 +72,7 @@ export const filterSchema = {
   hairColour: Object.values(hairColourLabels),
   hairType: Object.values(hairTypeLabels),
   height: Object.values(heightLabels),
+  build: Object.values(buildLabels),
   gender: Object.values(genderLabels),
   blood: Object.values(bloodTypeLabels),
   eyeColour: Object.values(eyeColourLabels),

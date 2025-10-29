@@ -169,6 +169,18 @@ export default function SearchOverlay({ citizens, cityTiles, onSelect, onClose }
         }
         return false;
       }
+      case "build": {
+        const idx = c.descriptors?.build;
+        if (Number.isInteger(idx)) {
+          const label = filterSchema.build[idx];
+          if (label && label.toLowerCase().includes(v)) return true;
+          const expect = valueIndex(filterSchema.build, v);
+          return expect >= 0 && idx === expect;
+        }
+        const label = c.descriptors?.buildLabel;
+        if (label) return label.toLowerCase().includes(v);
+        return false;
+      }
       case "gender": {
         const expect = valueIndex(filterSchema.gender, v);
         if (expect >= 0) return String(c.gender) === String(expect);

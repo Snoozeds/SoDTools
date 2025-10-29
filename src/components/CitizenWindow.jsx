@@ -8,6 +8,7 @@ import {
   facialFeatureLabels,
   bloodTypeLabels,
   heightLabels,
+  buildLabels,
   genderLabels,
 } from "../data/CitizenAttributes.jsx";
 
@@ -187,6 +188,8 @@ export default function CitizenWindow({
               <br />
               Hair: {hairTypeLabels[citizen.descriptors?.hairType]}, {hairColourName}
               <br />
+              Eyes: {eyeColourLabels[citizen.descriptors?.eyeColour] || "Unknown"}
+              <br />
               Facial features:{" "}
               {Array.isArray(citizen.descriptors?.facialFeatures) &&
               citizen.descriptors.facialFeatures.length > 0
@@ -195,10 +198,11 @@ export default function CitizenWindow({
                     .join(", ")
                 : "None"}
               <br />
-              Eyes: {eyeColourLabels[citizen.descriptors?.eyeColour] || "Unknown"}
               <br />
               Height: {citizen?.descriptors?.heightCM} cm (
               {heightLabels[citizen?.descriptors?.height] ?? "Unknown"})
+              <br />
+              Build: {heightLabels[citizen?.descriptors?.build] ?? "Unknown"}
               <br />
               Shoe size: {citizen?.descriptors?.shoeSize}
               <br />
