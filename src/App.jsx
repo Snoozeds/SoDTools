@@ -46,8 +46,11 @@ export default function App() {
           })
         });
       } else {
-        const textDecoder = new TextDecoder();
-        result = JSON.parse(textDecoder.decode(arrayBuffer));
+        const text = await file.text();
+        // Replace invalid NaN, I had "Casablanca Quarter.1.3903.wK08ZyOM1xmZWTL1" fail to load for me because it had NaN as one of the values strangely enough.
+        const clean = text
+          .replace(/\bNaN\b/g, "null")
+        result = JSON.parse(clean);
       }
 
       setCityData(result);
