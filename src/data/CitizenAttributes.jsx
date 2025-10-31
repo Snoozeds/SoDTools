@@ -78,5 +78,6 @@ export const filterSchema = {
   eyeColour: Object.values(eyeColourLabels),
   facialFeature: Object.values(facialFeatureLabels),
   shoeSize: ["5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"],
-  jobTitle: [] // Will be populated dynamically from city data
+  jobTitle: [], // Will be populated dynamically from city data
+  trait: [] // Will also be populated dynamically.
 };

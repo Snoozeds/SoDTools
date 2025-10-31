@@ -31,7 +31,7 @@ export default function CitizenWindow({
       : citizen?.password || "";
 
   const visibleTraits = Array.isArray(citizen?.traits)
-    ? citizen.traits.filter((t) => !/\d{4}$/.test((t.trait || "").trim()))
+    ? citizen.traits.filter((t) => !/\d{4}$/.test((t.trait || "").trim())) // Stops traits containing passcodes from showing up
     : [];
 
   const partner = useMemo(() => {

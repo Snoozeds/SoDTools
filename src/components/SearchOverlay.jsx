@@ -69,8 +69,15 @@ export default function SearchOverlay({ citizens, cityTiles, onSelect, onClose }
     } else {
       let values = filterSchema[normKey] || [];
 
-      if (normKey === "jobTitle" || normKey === "jobtitle") {
-        values = jobTitles;
+      if (normKey === "jobTitle" || normKey === "jobtitle") values = jobTitles;
+      if (normKey === "trait") {
+        const traits = new Set();
+        citizens.forEach((c) => {
+          (c.traits || []).forEach((t) => {
+            if (!/\d{4}$/.test(t.trait)) traits.add(t.trait); // skip traits that have 4 numbers, like their passcodes.
+          });
+        });
+        values = Array.from(traits);
       }
 
       const filtered = values.filter((v) =>
@@ -98,8 +105,21 @@ export default function SearchOverlay({ citizens, cityTiles, onSelect, onClose }
       setQuery(next);
 
       const normKey = normalizeKey(s);
-      let values = filterSchema[normKey] || [];
-      if (normKey === "jobTitle" || normKey === "jobtitle") values = jobTitles;
+
+      let values;
+      if (normKey === "jobTitle" || normKey === "jobtitle") {
+        values = jobTitles;
+      } else if (normKey === "trait") {
+        const traits = new Set();
+        citizens.forEach((c) => {
+          (c.traits || []).forEach((t) => {
+            if (!/\d{4}$/.test(t.trait)) traits.add(t.trait);
+          });
+        });
+        values = Array.from(traits);
+      } else {
+        values = filterSchema[normKey] || [];
+      }
 
       setSuggestions(values);
       setSelectedIndex(values.length ? 0 : -1);
@@ -136,6 +156,12 @@ export default function SearchOverlay({ citizens, cityTiles, onSelect, onClose }
   function matchesKey(c, key, val) {
     const v = String(val).toLowerCase();
     switch (key.toLowerCase()) {
+      case "trait": {
+        const traits = c.traits || [];
+        return traits.some(
+          (t) => !/\d{4}$/.test(t.trait) && t.trait.toLowerCase().includes(v) // skip traits that have 4 numbers, like their passcodes.
+        );
+      }
       case "haircolour": {
         const label = c.descriptors?.hairColourCategoryName;
         if (label) return label.toLowerCase().includes(v);
@@ -265,6 +291,15 @@ export default function SearchOverlay({ citizens, cityTiles, onSelect, onClose }
     const getAllowed = (key) => {
       const normKey = normalizeKey(key);
       if (normKey === "jobTitle" || normKey === "jobtitle") return jobTitles || [];
+      if (normKey === "trait") {
+        const traits = new Set();
+        citizens.forEach((c) => {
+          (c.traits || []).forEach((t) => {
+            if (!/\d{4}$/.test(t.trait)) traits.add(t.trait); // skip traits that have 4 numbers, like their passcodes.
+          });
+        });
+        return Array.from(traits);
+      }
       return filterSchema[normKey] || [];
     };
 
