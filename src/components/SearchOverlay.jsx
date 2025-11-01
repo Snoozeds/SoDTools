@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { filterSchema, facialFeatureLabels, hairTypeLabels } from "../data/CitizenAttributes";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function SearchOverlay({ citizens, cityTiles, onSelect, onClose }) {
   const [query, setQuery] = useState("");
@@ -369,78 +370,129 @@ export default function SearchOverlay({ citizens, cityTiles, onSelect, onClose }
   }, [citizens, query, cityTiles]);
 
   return (
-    <div
-      className="fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm flex flex-col items-center justify-start pt-[15vh]"
-      onClick={onClose}
-    >
-      <div
-        className="relative w-[600px] bg-ui-panel border-2 border-ui-border rounded-md shadow-[0_0_24px_rgba(0,0,0,0.6)] p-4"
-        onClick={(e) => e.stopPropagation()}
+    <AnimatePresence>
+      <motion.div
+        key="overlay"
+        className="fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm flex flex-col items-center justify-start pt-[15vh]"
+        onClick={onClose}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
       >
-        {/* Search input */}
-        <div className="relative">
-          <input
-            type="text"
-            placeholder={"hairColour:black shoeSize:10 | \"Ane Vazquez\""}
-            value={query}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            autoFocus
-            className="w-full bg-transparent border-b border-ui-border-dim text-ui-text text-lg pb-2 mb-3 focus:outline-none"
-          />
+        <motion.div
+          className="relative w-[600px] bg-ui-panel border-2 border-ui-border rounded-md shadow-[0_0_24px_rgba(0,0,0,0.6)] p-4"
+          onClick={(e) => e.stopPropagation()}
+          initial={{ scale: 0.96, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.96, opacity: 0 }}
+          transition={{ duration: 0.15, ease: "easeOut" }}
+        >
+          {/* Search input */}
+          <div className="relative">
+            <input
+              type="text"
+              placeholder={"hairColour:black shoeSize:10 | \"Ane Vazquez\""}
+              value={query}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              autoFocus
+              className="w-full bg-transparent border-b border-ui-border-dim text-ui-text text-lg pb-2 mb-3 focus:outline-none focus:border-ui-border"
+            />
 
-          {/* Suggestions dropdown */}
-          {suggestions.length > 0 && (
-            <div className="absolute left-0 top-full mt-1 w-full bg-ui-panel border border-ui-border-dim rounded-sm shadow-lg max-h-96 overflow-y-auto z-[10000]">
-              {suggestions.map((s, i) => (
-                <button
-                  key={`${s}-${i}`}
-                  className={`block w-full text-left px-3 py-1 ${i === selectedIndex ? "bg-ui-border/20" : "hover:bg-ui-border/10"
-                    } text-ui-text`}
-                  onMouseEnter={() => setSelectedIndex(i)}
-                  onClick={() => applySuggestion(s)}
+            {/* Suggestions dropdown */}
+            <AnimatePresence>
+              {suggestions.length > 0 && (
+                <motion.div
+                  key="suggestions"
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.15, ease: "easeOut" }}
+                  className="absolute left-0 top-full mt-1 w-full bg-ui-panel border border-ui-border-dim rounded-sm shadow-lg max-h-96 overflow-y-auto z-[10000]"
                 >
-                  {s}
-                </button>
+                  {suggestions.map((s, i) => (
+                    <button
+                      key={`${s}-${i}`}
+                      className={`block w-full text-left px-3 py-1 ${i === selectedIndex ? "bg-ui-border/20" : "hover:bg-ui-border/10"
+                        } text-ui-text`}
+                      onMouseEnter={() => setSelectedIndex(i)}
+                      onClick={() => applySuggestion(s)}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Active filters */}
+          <motion.div
+            layout
+            className="flex flex-wrap gap-2 mb-2 mt-1"
+            transition={{ duration: 0.25, ease: "easeOut" }}
+          >
+            <AnimatePresence>
+              {Array.from(parseQueryTokens(query).filters.entries()).flatMap(([key, vals]) =>
+                vals.map((val, idx) => (
+                  <motion.span
+                    layout
+                    key={`${key}-${val}-${idx}`}
+                    className="px-2 py-1 text-sm bg-ui-border/20 rounded-sm text-ui-text"
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.9, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {key}: {val}
+                  </motion.span>
+                ))
+              )}
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Results */}
+          <motion.div
+            layout
+            className="max-h-[300px] overflow-y-auto mt-2"
+            transition={{ duration: 0.25, ease: "easeOut" }}
+          >
+            <AnimatePresence>
+              {results.map((c) => (
+                <motion.button
+                  key={c.humanID}
+                  layout
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 4 }}
+                  transition={{ duration: 0.1 }}
+                  onClick={() => {
+                    onSelect(c.humanID);
+                    onClose();
+                  }}
+                  className="block w-full text-left px-3 py-2 rounded-sm hover:bg-[rgba(255,255,255,0.05)] transition-colors"
+                >
+                  <div className="font-semibold">{c.citizenName}</div>
+                  <div className="text-sm text-ui-text-dim">humanID: {c.humanID}</div>
+                </motion.button>
               ))}
-            </div>
-          )}
-        </div>
-
-        {/* Active filters */}
-        <div className="flex flex-wrap gap-2 mb-2 mt-1">
-          {Array.from(parseQueryTokens(query).filters.entries()).map(([key, vals]) =>
-            vals.map((val, idx) => (
-              <span
-                key={`${key}-${val}-${idx}`}
-                className="px-2 py-1 text-sm bg-ui-border/20 rounded-sm text-ui-text"
-              >
-                {key}: {val}
-              </span>
-            ))
-          )}
-        </div>
-
-        {/* Results */}
-        <div className="max-h-[300px] overflow-y-auto mt-2">
-          {results.map((c) => (
-            <button
-              key={c.humanID}
-              onClick={() => {
-                onSelect(c.humanID);
-                onClose();
-              }}
-              className="block w-full text-left px-3 py-2 rounded-sm hover:bg-[rgba(255,255,255,0.05)] transition-colors"
-            >
-              <div className="font-semibold">{c.citizenName}</div>
-              <div className="text-sm text-ui-text-dim">humanID: {c.humanID}</div>
-            </button>
-          ))}
-          {query && results.length === 0 && (
-            <div className="text-ui-text-dim text-center py-4">No matches</div>
-          )}
-        </div>
-      </div>
-    </div>
+              {query && results.length === 0 && (
+                <motion.div
+                  key="no-results"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="text-ui-text-dim text-center py-4"
+                >
+                  No matches
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 }
